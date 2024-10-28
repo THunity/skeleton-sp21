@@ -113,6 +113,16 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        for (int i = 0; i < board.size(); i++)
+        {
+            for (int j = 0; j < board.size(); j++)
+            {
+                if (board.tile(i, j) != null)
+                {
+                    board.move()
+                }
+            }
+        }
 
         checkGameOver();
         if (changed) {
@@ -137,7 +147,16 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++)
+        {
+            for (int j = 0; j < b.size(); j++)
+            {
+                if (b.tile(i, j) == null)
+                {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +166,16 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++)
+        {
+            for (int j = 0; j < b.size(); j++)
+            {
+                if (b.tile(i, j) != null && b.tile(i, j).value() == MAX_PIECE)
+                {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -158,7 +186,25 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        // There is a empty space
+        for (int i = 0; i < b.size(); i++){
+            for (int j = 0; j < b.size(); j++){
+                if (b.tile(i, j) == null)
+                {
+                    return true;
+                }
+                if (b.tile(0, 0).value() == b.tile(0, 1).value() || b.tile(0, 0).value() == b.tile(1, 0).value())
+                    return true;
+                if (b.tile(b.size() - 1, 0).value() == b.tile(b.size() - 2, 0).value() || b.tile(b.size() - 1, 0).value() == b.tile(b.size() - 1, 1).value())
+                    return true;
+                if (b.tile(0, b.size() - 1).value() == b.tile(0, b.size() - 2).value() || b.tile(0, b.size() - 1).value() == b.tile(1, b.size() - 1).value())
+                    return true;
+                if (b.tile(b.size() - 1, b.size() - 1).value() == b.tile(b.size() - 2, b.size() - 1).value() || b.tile(b.size() - 1, b.size() - 1).value() == b.tile(b.size() - 1, b.size() - 2).value())
+                    return true;
+                if ((i < b.size() - 1 && j < b.size() - 1) && (i > 0 && j > 0) && (b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i + 1, j).value() || b.tile(i, j - 1).value() == b.tile(i, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value()))
+                    return true;
+            }
+        }
         return false;
     }
 
