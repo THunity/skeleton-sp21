@@ -238,27 +238,28 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // There is a empty space
-        for (int i = 0; i < b.size(); i++){
-            for (int j = 0; j < b.size(); j++){
-                if (b.tile(i, j) == null)
-                {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                // 如果当前格子为空，则存在至少一个有效移动
+                if (b.tile(i, j) == null) {
                     return true;
                 }
-                if (b.tile(0, 0).value() == b.tile(0, 1).value() || b.tile(0, 0).value() == b.tile(1, 0).value())
+
+                // 检查与当前格子相邻的四个方向
+                if ((i > 0 && b.tile(i - 1, j) != null && b.tile(i, j).value() == b.tile(i - 1, j).value()) || // 上方
+                        (i < 3 && b.tile(i + 1, j) != null && b.tile(i, j).value() == b.tile(i + 1, j).value()) || // 下方
+                        (j > 0 && b.tile(i, j - 1) != null && b.tile(i, j).value() == b.tile(i, j - 1).value()) || // 左方
+                        (j < 3 && b.tile(i, j + 1) != null && b.tile(i, j).value() == b.tile(i, j + 1).value())) { // 右方
                     return true;
-                if (b.tile(b.size() - 1, 0).value() == b.tile(b.size() - 2, 0).value() || b.tile(b.size() - 1, 0).value() == b.tile(b.size() - 1, 1).value())
-                    return true;
-                if (b.tile(0, b.size() - 1).value() == b.tile(0, b.size() - 2).value() || b.tile(0, b.size() - 1).value() == b.tile(1, b.size() - 1).value())
-                    return true;
-                if (b.tile(b.size() - 1, b.size() - 1).value() == b.tile(b.size() - 2, b.size() - 1).value() || b.tile(b.size() - 1, b.size() - 1).value() == b.tile(b.size() - 1, b.size() - 2).value())
-                    return true;
-                if ((i < b.size() - 1 && j < b.size() - 1) && (i > 0 && j > 0) && (b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i + 1, j).value() || b.tile(i, j - 1).value() == b.tile(i, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value()))
-                    return true;
+                }
             }
         }
         return false;
     }
+
+
+
+
 
 
     @Override
