@@ -1,5 +1,6 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -110,19 +111,68 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
-        for (int i = 0; i < board.size(); i++)
+        if (side == Side.EAST)
+            board.setViewingPerspective(Side.EAST);
+        if (side == Side.SOUTH)
+            board.setViewingPerspective(Side.SOUTH);
+        if (side == Side.WEST)
+            board.setViewingPerspective(Side.WEST);
+
+        boolean[][] merged = new boolean[board.size()][board.size()];
+        // 遍历整个表格
+        for (int c = board.size() - 1; c >= 0; c--)
         {
-            for (int j = 0; j < board.size(); j++)
+            for (int r = board.size() - 1; r >= 0; r--)
             {
-                if (board.tile(i, j) != null)
+                // 处理当前格子
+                // 如果当前格子不是null的话
+                if (r < board.size() - 1 && board.tile(c, r) != null)
                 {
-                    board.move()
+                    Tile t = board.tile(c, r);
+                    // 检查此处上方的格子
+                    // 循环停止条件：索引到3，不为null
+                    int rup = r + 1;
+                    while (rup < board.size() - 1 && board.tile(c, rup) == null)
+                    {
+                        rup++;
+                    }
+                    // 此时rup已经更新到上方最近的不为空的格子索引处或者最上方一行  再加1
+                    // 单独处理第三行
+                    if (rup == board.size() - 1 && board.tile(c, rup) == null)
+                    {
+                        // 可以直接移动
+                        board.move(c, board.size() - 1, t);
+                        changed = true;
+                    }
+                    // 如果最近的不为空的格子与当前格子值不相等
+                    else if (board.tile(c, rup) != null && board.tile(c, rup).value() != t.value())
+                    {
+                        // 将该格子移动到这个格子的正下放
+                        board.move(c, rup - 1, t);
+                        changed = true;
+                    }
+                    // 如果相等的话
+                    else if (board.tile(c, rup) != null && board.tile(c, rup).value() == t.value())
+                    {
+                        // 如果该前往的格子已经被合并过了
+                        if (merged[c][rup])
+                        {
+                            board.move(c, rup - 1, t);
+                            changed = true;
+                        }
+                        else{
+                        // 进行移动合并
+                            board.move(c, rup, t);
+                            changed = true;
+                            score += t.value() * 2;
+                            merged[c][rup] = true;
+                        }
+                    }
                 }
+                // 如果已经在最上方，就不动弹
             }
         }
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
@@ -130,6 +180,8 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -210,7 +262,7 @@ public class Model extends Observable {
 
 
     @Override
-     /** Returns the model as a string, used for debugging. */
+     /* Returns the model as a string, used for debugging. */
     public String toString() {
         Formatter out = new Formatter();
         out.format("%n[%n");
