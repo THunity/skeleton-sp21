@@ -44,7 +44,10 @@ public class BuggyAList<Item> {
 
     /** Returns the item from the back of the list. */
     public Item getLast() {
-        return items[size - 1];
+        if (size() > 0)
+            return items[size - 1];
+        else
+            return items[0];
     }
     /** Gets the ith item in the list (0 is the front). */
     public Item get(int i) {
@@ -59,12 +62,17 @@ public class BuggyAList<Item> {
     /** Deletes item from back of the list and
       * returns deleted item. */
     public Item removeLast() {
-        if ((size < items.length / 4) && (size > 4)) {
-            resize(size / 4);
+        if (size > 0) {
+            if ((size < items.length / 4) && (size > 4)) {
+                resize(size / 4);
+            }
+            Item x = getLast();
+            items[size - 1] = null;
+            size = size - 1;
+            return x;
         }
-        Item x = getLast();
-        items[size - 1] = null;
-        size = size - 1;
-        return x;
+        else{
+            return null;
+        }
     }
 }
